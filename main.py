@@ -17,7 +17,7 @@ app = FastAPI()
 # Enable CORS so frontend can call backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Use "*" for testing; replace with your frontend URL in production
+    allow_origins=["https://aunchatbot.netlify.app/"],  # Use "*" for testing; replace with your frontend URL in production
     allow_methods=["*"],
     allow_headers=["*"],
 )
