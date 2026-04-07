@@ -17,7 +17,7 @@ app = FastAPI()
 # Enable CORS so frontend can call backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://aunchatbot.netlify.app/"],  # <-- Use "*" for testing. Replace with your frontend URL later
+    allow_origins=["*"],  # Use "*" for testing; replace with your frontend URL in production
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -40,10 +40,11 @@ You are an AI assistant. Follow these rules strictly:
 async def chat(msg: Message):
     try:
         model = genai.GenerativeModel("gemini-2.5-flash")
-        response = model.generate_content(
-            {"prompt": SYSTEM_PROMPT + "\n" + msg.message}
-        )
+        # Combine system prompt + user message
+        response = model.generate_content({
+            "prompt": SYSTEM_PROMPT + "\n" + msg.message
+        })
         return {"reply": response.text}
     except Exception as e:
-        print("ERROR:", e)  # logs in Railway
-        return {"error": str(e)}
+        print("ERROR:", e)  # logs in Railway for debugging
+        return {"error": "Could not reach Gemini API. " + str(e)}
