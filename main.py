@@ -17,7 +17,7 @@ app = FastAPI()
 # THEN add middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5174"],
+    allow_origins=["https://aunchatbot.netlify.app/"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
