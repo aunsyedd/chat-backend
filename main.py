@@ -5,28 +5,26 @@ import os
 import google.generativeai as genai
 from fastapi.middleware.cors import CORSMiddleware
 
-# Load environment variables
+# Load .env
 load_dotenv()
 
 # Configure Gemini
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-# Create FastAPI app
+# Create app FIRST
 app = FastAPI()
 
-# Enable CORS so frontend can call backend
+# THEN add middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://aunchatbot.netlify.app/"],  # Use "*" for testing; replace with your frontend URL in production
+    allow_origins=["https://aunchatbot.netlify.app/"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Message schema
 class Message(BaseModel):
     message: str
 
-# System prompt for Gemini
 SYSTEM_PROMPT = """
 You are an AI assistant. Follow these rules strictly:
 1. Answer in 3–5 short sentences max.
@@ -36,15 +34,14 @@ You are an AI assistant. Follow these rules strictly:
 5. Summarize everything in 4 lines max.
 """
 
+
 @app.post("/chat")
 async def chat(msg: Message):
     try:
         model = genai.GenerativeModel("gemini-2.5-flash")
-        # Combine system prompt + user message
-        response = model.generate_content({
-            "prompt": SYSTEM_PROMPT + "\n" + msg.message
-        })
+        response = model.generate_content(
+            
+            msg.message)
         return {"reply": response.text}
     except Exception as e:
-        print("ERROR:", e)  # logs in Railway for debugging
-        return {"error": "Could not reach Gemini API. " + str(e)}
+        return {"error": str(e)}
